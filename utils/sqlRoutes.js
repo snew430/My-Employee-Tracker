@@ -12,6 +12,13 @@ const getRoles = async () => {
   return titles;
 };
 
+const insertDpt = async (newDpt) => {
+  await db
+    .promise()
+    .query(`INSERT INTO department (name) VALUES (?)`, newDpt)
+    .then(console.log(`Added new department, ${newDpt}`));
+};
+
 const viewDpt = async () => {
   await db
     .promise()
@@ -54,4 +61,4 @@ const viewRole = async () => {
     });
 };
 
-module.exports = { getRoles, viewDpt, viewEmp, viewRole };
+module.exports = { getRoles, insertDpt, viewDpt, viewEmp, viewRole };

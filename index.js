@@ -1,5 +1,12 @@
 const mainPrompts = require("./utils/mainPrompts");
-const { getRoles, viewDpt, viewEmp, viewRole } = require("./utils/sqlRoutes");
+const {
+  getRoles,
+  insertDpt,
+  viewDpt,
+  viewEmp,
+  viewRole,
+} = require("./utils/sqlRoutes");
+const addDpt = require("./utils/addDpt");
 
 const promptStart = () => {
   mainPrompts().then((answer) => {
@@ -18,6 +25,9 @@ const promptStart = () => {
         viewDpt().then(promptStart);
         break;
       case "Add A New Department":
+        addDpt().then((department) => {
+          insertDpt(department.dpt).then(promptStart);
+        });
         break;
       case "Make Changes":
         break;
