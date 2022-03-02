@@ -1,28 +1,54 @@
 const mainPrompts = require("./utils/mainPrompts");
 const {
-  getRoles,
   insertDpt,
+  insertRole,
+  insertEmp,
   viewDpt,
   viewEmp,
   viewRole,
 } = require("./utils/sqlRoutes");
 const addDpt = require("./utils/addDpt");
+const addRole = require("./utils/addRole");
+const addEmp = require("./utils/addEmp");
+const cTable = require("console.table");
 
 const promptStart = () => {
   mainPrompts().then((answer) => {
     switch (answer.main) {
       case "View All Employees":
-        viewEmp().then(promptStart);
+        viewEmp()
+          .then((employees) => {
+            console.table(employees);
+          })
+          .then(promptStart);
         break;
       case "Add A New Employee":
+        viewRole().then((roles) => {
+          addEmp(roles).then((employee) => {
+            insertEmp(employee).then(promptStart);
+          });
+        });
         break;
       case "View All Roles":
-        viewRole().then(promptStart);
+        viewRole()
+          .then((roles) => {
+            console.table(roles);
+          })
+          .then(promptStart);
         break;
       case "Add A New Role":
+        viewDpt().then((departments) => {
+          addRole(departments).then((role) => {
+            insertRole(role).then(promptStart);
+          });
+        });
         break;
       case "View All Departments":
-        viewDpt().then(promptStart);
+        viewDpt()
+          .then((departments) => {
+            console.table(departments);
+          })
+          .then(promptStart);
         break;
       case "Add A New Department":
         addDpt().then((department) => {

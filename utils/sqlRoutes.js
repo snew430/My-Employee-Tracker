@@ -1,17 +1,6 @@
 const cTable = require("console.table");
 const db = require("../db/connections");
 
-const getRoles = async () => {
-  let titles;
-  await db
-    .promise()
-    .query(`SELECT title FROM role`)
-    .then((result) => {
-      titles = result[0].map((x) => x.title);
-    });
-  return titles;
-};
-
 const insertDpt = async (newDpt) => {
   await db
     .promise()
@@ -19,17 +8,40 @@ const insertDpt = async (newDpt) => {
     .then(console.log(`Added new department, ${newDpt}`));
 };
 
-const viewDpt = async () => {
+const insertRole = async ({ role, salary, whichDpt }) => {
   await db
     .promise()
-    .query(`SELECT name FROM department`)
+    .query(
+      `INSERT INTO role (title, salary, department_id)
+      SELECT '${role}', ${salary}, id
+      FROM department
+      WHERE name = '${whichDpt}'`
+    )
+    .then(console.log(`Added new role, ${role}`));
+};
+
+const insertEmp = async () => {
+  await db
+    .promise()
+    .query(
+      `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`
+    )
+    .then(console.log(`Added new employee`));
+};
+
+const viewDpt = async () => {
+  let departments;
+  await db
+    .promise()
+    .query(`SELECT * FROM department`)
     .then((result) => {
-      let departments = result[0].map((x) => [x.name]);
-      console.table(["Departments"], departments);
+      departments = result[0];
     });
+  return departments;
 };
 
 const viewEmp = async () => {
+  let employees;
   await db
     .promise()
     .query(
@@ -41,11 +53,13 @@ const viewEmp = async () => {
       ORDER BY last_name`
     )
     .then((result) => {
-      console.table(result[0]);
+      employees = result[0];
     });
+  return employees;
 };
 
 const viewRole = async () => {
+  let roles;
   await db
     .promise()
     .query(
@@ -57,8 +71,16 @@ const viewRole = async () => {
       ORDER BY title`
     )
     .then((result) => {
-      console.table(result[0]);
+      roles = result[0];
     });
+  return roles;
 };
 
-module.exports = { getRoles, insertDpt, viewDpt, viewEmp, viewRole };
+module.exports = {
+  insertDpt,
+  insertRole,
+  insertEmp,
+  viewDpt,
+  viewEmp,
+  viewRole,
+};
