@@ -20,13 +20,14 @@ const insertRole = async ({ role, salary, whichDpt }) => {
     .then(console.log(`Added new role, ${role}`));
 };
 
-const insertEmp = async () => {
-  await db
-    .promise()
-    .query(
-      `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`
-    )
-    .then(console.log(`Added new employee`));
+const insertEmp = async (employee) => {
+  console.log(employee);
+  // await db
+  //   .promise()
+  //   .query(
+  //     `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`
+  //   )
+  //   .then(console.log(`Added new employee`));
 };
 
 const viewDpt = async () => {
@@ -76,6 +77,32 @@ const viewRole = async () => {
   return roles;
 };
 
+const changeEmp = async ({ whichEmp, whichRole }) => {
+  whichEmp = whichEmp.split(" ");
+  const first = whichEmp[0];
+  const last = whichEmp[1];
+  console.log(whichEmp);
+  console.log(whichRole);
+
+  await db
+    .promise()
+    .query(
+      `SELECT id FROM role
+      WHERE title = '${whichRole}'`
+    )
+    .then((roleId) => {
+      console.log(roleId[0][0].id);
+      db.promise()
+        .query(
+          `UPDATE employee SET role_id = '${roleId[0][0].id}'
+      WHERE first_name = '${first}'`
+        )
+        .then(
+          console.log(`Changed ${first} ${last}'s job role to ${whichRole}`)
+        );
+    });
+};
+
 module.exports = {
   insertDpt,
   insertRole,
@@ -83,4 +110,5 @@ module.exports = {
   viewDpt,
   viewEmp,
   viewRole,
+  changeEmp,
 };

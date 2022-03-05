@@ -12,7 +12,7 @@ const mainPrompts = () => {
         "Add A New Role",
         "View All Departments",
         "Add A New Department",
-        "Make Changes",
+        "Update Employee Role",
         "Quit",
       ],
     },

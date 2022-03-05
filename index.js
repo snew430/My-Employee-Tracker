@@ -6,10 +6,12 @@ const {
   viewDpt,
   viewEmp,
   viewRole,
-} = require("./utils/sqlRoutes");
+  changeEmp,
+} = require("./utils/sqlQueries");
 const addDpt = require("./utils/addDpt");
 const addRole = require("./utils/addRole");
 const addEmp = require("./utils/addEmp");
+const updateRole = require("./utils/updateRole");
 const cTable = require("console.table");
 
 const promptStart = () => {
@@ -24,8 +26,10 @@ const promptStart = () => {
         break;
       case "Add A New Employee":
         viewRole().then((roles) => {
-          addEmp(roles).then((employee) => {
-            insertEmp(employee).then(promptStart);
+          viewEmp().then((employees) => {
+            addEmp(roles, employees).then((employee) => {
+              insertEmp(employee).then(promptStart);
+            });
           });
         });
         break;
@@ -55,7 +59,14 @@ const promptStart = () => {
           insertDpt(department.dpt).then(promptStart);
         });
         break;
-      case "Make Changes":
+      case "Update Employee Role":
+        viewEmp().then((employees) => {
+          viewRole().then((roles) => {
+            updateRole(employees, roles).then((newEmployeeRole) => {
+              changeEmp(newEmployeeRole).then(promptStart);
+            });
+          });
+        });
         break;
       case "Quit":
         console.log("Goodbye!");

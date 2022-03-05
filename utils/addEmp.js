@@ -1,7 +1,16 @@
 const inquirer = require("inquirer");
 
-const addEmp = async (roles) => {
+const addEmp = async (roles, employees) => {
+  // console.log(employees);
+  // console.log(roles);
+  // employees = employees.map((x) => {
+  //   return { id: x.id, name: `${x.first_name} ${x.last_name}` };
+  // });
+  employees = employees.map((x) => `${x.first_name} ${x.last_name}`);
+  employees.push("None");
+
   roles = roles.map((x) => x.title);
+
   return inquirer.prompt([
     {
       type: "input",
@@ -34,6 +43,12 @@ const addEmp = async (roles) => {
       name: "whichRole",
       message: "Which role will they have?",
       choices: roles,
+    },
+    {
+      type: "list",
+      name: "manager",
+      message: "Who is their manager?",
+      choices: employees,
     },
   ]);
 };
