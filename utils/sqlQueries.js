@@ -35,9 +35,13 @@ const insertEmp = async (employee) => {
         WHERE first_name = '${employee.manager.split(" ")[0]}'`
         )
         .then((managerId) => {
+          managerId = managerId[0][0];
+          if (managerId === undefined) {
+            managerId = { id: "NULL" };
+          }
           db.promise()
             .query(
-              `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${employee.firstName}','${employee.lastName}',${roleId[0][0].id},${managerId[0][0].id})`
+              `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${employee.firstName}','${employee.lastName}',${roleId[0][0].id},${managerId.id})`
             )
             .then(
               console.log(
@@ -95,10 +99,21 @@ const viewRole = async () => {
   return roles;
 };
 
-const changeEmp = async ({ whichEmp, whichRole }) => {
+const changeEmp = async ({ whichEmp, whichRole, whichManager }) => {
   whichEmp = whichEmp.split(" ");
   const first = whichEmp[0];
   const last = whichEmp[1];
+  let managerId;
+  if (whichManager === "None") {
+    managerId = null;
+  } else {
+    whichManager = whichManager.split(" ");
+    whichManager = whichManager[0];
+    managerId = await db
+      .promise()
+      .query(`SELECT id FROM employee WHERE first_name = '${whichManager}'`);
+    managerId = managerId[0][0].id;
+  }
 
   await db
     .promise()
@@ -109,7 +124,7 @@ const changeEmp = async ({ whichEmp, whichRole }) => {
     .then((roleId) => {
       db.promise()
         .query(
-          `UPDATE employee SET role_id = '${roleId[0][0].id}'
+          `UPDATE employee SET role_id = '${roleId[0][0].id}', manager_id = '${managerId}'
       WHERE first_name = '${first}'`
         )
         .then(
